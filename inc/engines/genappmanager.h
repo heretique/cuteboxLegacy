@@ -3,13 +3,15 @@
 
 #include <QObject>
 #include <QVariant>
+#ifdef Q_OS_SYMBIAN
 #include <QSystemDeviceInfo>
 #include <QSystemNetworkInfo>
-#ifdef Q_OS_SYMBIAN
 #include <QValueSpaceSubscriber>
-#endif // Q_OS_SYMBIAN
 
 QTM_USE_NAMESPACE
+
+#endif // Q_OS_SYMBIAN
+
 
 #include "genenums.h"
 #include "genstateevent.h"
@@ -89,9 +91,11 @@ protected slots:
 
 private slots:
     void driveDismount(GenWatchedDrive drive);
-    void profileChanged(QSystemDeviceInfo::Profile profile);
     void batteryLevelChanged(int batteryLevel);
+#ifdef Q_OS_SYMBIAN
+    void profileChanged(QSystemDeviceInfo::Profile profile);
     void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode, int level);
+#endif
     void startOauthTokenRequest(QString userName, QString userPass);
     void startRegisterRequest(QString firstName,
                               QString lastName,
@@ -116,10 +120,10 @@ private:
     GenMainWindow *_mainWindow; /*!< The application's main window */
     GenAppModel *_applicationModel; /*!< The application model */
     GenFileServerUtils *_fsUtils; /*!< File server utils. Used to monitor memory card removal */
+#ifdef Q_OS_SYMBIAN
     QSystemDeviceInfo *_deviceInfo; /*!< Monitors the active profile, battery status>*/
     QSystemNetworkInfo *_networkInfo;
     QSystemDeviceInfo::Profile _activeProfile;
-#ifdef Q_OS_SYMBIAN
     QValueSpaceSubscriber *_vkbstate;
 #ifdef FEATURE_ADS
     InnerActiveAdModule *_adModule;
