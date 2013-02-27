@@ -1,0 +1,170 @@
+#include "filetransfer.h"
+#include "qlog.h"
+
+#include <QMutexLocker>
+#include <QFile>
+#include <QFileInfo>
+#include <QDir>
+
+FileTransfer::FileTransfer(QObject *parent) : QThread(parent),
+_source(QString()), _destination(QString()), _copyFlags(0), _cancel(false)
+{
+
+}
+
+FileTransfer::~FileTransfer()
+{
+
+}
+
+void FileTransfer::fileTransfer(QString source, QString destination, CopyFlags flags)
+{
+    _cancel = false;
+    _source = source;
+    _destination = destination;
+    _copyFlags = flags;
+    start();
+}
+
+void FileTransfer::cancel()
+{
+    QMutexLocker locker(&_mutex);
+    _cancel = true;
+}
+
+void FileTransfer::run()
+{
+    QLOG_INFO("FileTranfer::run --> in");
+    if (!QFile::exists(_source))
+    {
+        QLOG_ERROR("FileTranfer::run --> " << "Source file doesn't exist");
+        emit fileTransferError(SourceDoesntExists, "Source file doesn't exist");
+        return;
+    }
+    if (QFile::exists(_destination) && !(_copyFlags & Overwrite))
+    {
+        QLOG_ERROR("FileTranfer::run --> " << "Destination file already exists and overwrite flag is not set");
+        emit fileTransferError(DestinationExists, "Destination file already exists and overwrite flag is not set");
+        return;
+    }
+    if (QFile::exists(_destination) && (_copyFlags & Overwrite) && !deleteFile(_destination))
+    {
+        QLOG_ERROR("FileTranfer::run --> " << "Couldn't overwrite destination file");
+        emit fileTransferError(CannotRemoveDestinationFile, "Couldn't overwrite destination file");
+        return;
+    }
+    if (_copyFlags & EnsurePathExists)
+    {
+        if (!ensurePathExists(_destination))
+        {
+            QLOG_ERROR("FileTranfer::run --> " << "Cannot create destination directory");
+            emit fileTransferError(CannotCreateDestinationDirectory, "Cannot create destination directory");
+            return;
+        }
+    }
+    else
+    {
+        QFileInfo fi(_destination);
+        QDir dir = fi.dir();
+        if (!dir.exists())
+        {
+            QLOG_ERROR("FileTranfer::run --> " << "Destination path does not exist");
+            emit fileTransferError(PathToDestinationNotExists, "Destination path does not exist");
+            return;
+        }
+    }
+
+    if ((_copyFlags & MoveFile))
+    {
+        QFile sourceFile(_source);
+        if (sourceFile.rename(_destination))
+        {
+            QLOG_INFO("FileTranfer::run --> finished moving file");
+            emit fileTransferFinished();
+            return;
+        }
+    }
+
+    QFile sourceFile(_source);
+    QFile destinationFile(_destination);
+
+    if (!sourceFile.open(QIODevice::ReadOnly))
+    {
+        QLOG_ERROR("FileTranfer::run --> " << "Couldn't open source file for reading");
+        emit fileTransferError(CannotOpenSourceFile, "Couldn't open source file for reading");
+        return;
+    }
+    if (!destinationFile.open(QIODevice::WriteOnly))
+    {
+        QLOG_ERROR("FileTranfer::run --> " << "Couldn't open destination file for writing");
+        emit fileTransferError(CannotWriteDestinationFile, "Couldn't open destination file for writing");
+        return;
+    }
+    qint64 size = sourceFile.size();
+    emit fileTransferStarted(_source, _destination, size);
+    qint64 progress = 0;
+    char block[READ_BLOCK_SIZE];
+    int error = NoError;
+    while (1)
+    {
+        QMutexLocker locker(&_mutex);
+        if (_cancel)
+        {
+            QLOG_INFO("FileTranfer::run --> canceled");
+            error = Cancelled;
+            emit fileTransferError(error, "Operation was cancelled");
+            break;
+        }
+        locker.unlock();
+        qint64 in = sourceFile.read(block, 4096);
+        if (in == 0)
+        {
+            QLOG_INFO("FileTranfer::run --> tranfer successfully finished");
+            emit fileTransferFinished();
+            break;
+        }
+        if (in == -1)
+        {
+            error = CannotReadSourceFile;
+            QLOG_ERROR("FileTranfer::run --> " << "Cannot read source file");
+            emit fileTransferError(error, "Cannot read source file"); // cannot read
+            break;
+        }
+        if (in != destinationFile.write(block, in))
+        {
+            error = CannotWriteDestinationFile;
+            QLOG_ERROR("FileTranfer::run --> " << "Cannot write destination file");
+            emit fileTransferError(error, "Cannot write destination file"); // cannot write
+            break;
+        }
+        progress += in;
+        emit fileTransferProgress(progress);
+    }
+    sourceFile.close();
+    destinationFile.close();
+    if (error != NoError)
+    {
+        destinationFile.remove();
+    }
+    else
+    {
+        destinationFile.setPermissions(sourceFile.permissions());
+    }
+    QLOG_INFO("FileTranfer::run --> out");
+}
+
+bool FileTransfer::ensurePathExists(QString path)
+{
+    QFileInfo fi(path);
+    QDir dir = fi.dir();
+    if (!dir.exists())
+    {
+        return dir.mkpath(dir.path());
+    }
+    return true;
+}
+
+bool FileTransfer::deleteFile(QString absoluteFilePath)
+{
+    return QFile::remove(absoluteFilePath);
+}
