@@ -54,10 +54,10 @@ GenApplicationManager::GenApplicationManager() :
     _mainWindow(NULL),
     _applicationModel(new GenAppModel(this)),
     _fsUtils(new GenFileServerUtils(this)),
+#ifdef Q_OS_SYMBIAN
     _deviceInfo(new QSystemDeviceInfo(this)),
     _networkInfo(new QSystemNetworkInfo(this)),
     _activeProfile(QSystemDeviceInfo::UnknownProfile),
-#ifdef Q_OS_SYMBIAN
     _vkbstate(new QValueSpaceSubscriber( "/vkb/state", this )),
 #endif // Q_OS_SYMBIAN
     _wsEngine(new GenWSEngine(this))
@@ -227,6 +227,7 @@ void GenApplicationManager::initialize()
         _wsEngine->setUserToken(token, secret);
     }
 
+#ifdef Q_OS_SYMBIAN
     // set indicator and connect for notifications
     connect(_deviceInfo, SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
             SLOT(profileChanged(QSystemDeviceInfo::Profile)));
@@ -244,6 +245,7 @@ void GenApplicationManager::initialize()
     {
         _signalStrength = _networkInfo->networkSignalStrength(mode);
     }
+#endif
 
     _mainWindow->statusBar()->indicatorsWidget()->setBatteryLevel(_batteryLevel);
     _mainWindow->statusBar()->indicatorsWidget()->setSignalLevel(_signalStrength);
@@ -391,15 +393,16 @@ void GenApplicationManager::driveDismount(GenWatchedDrive drive)
     QApplication::quit();
 }
 
-void GenApplicationManager::profileChanged(QSystemDeviceInfo::Profile profile)
-{
-    _activeProfile = profile;
-}
-
 void GenApplicationManager::batteryLevelChanged(int batteryLevel)
 {
     _batteryLevel = batteryLevel;
     _mainWindow->statusBar()->indicatorsWidget()->setBatteryLevel(batteryLevel);
+}
+
+#ifdef Q_OS_SYMBIAN
+void GenApplicationManager::profileChanged(QSystemDeviceInfo::Profile profile)
+{
+    _activeProfile = profile;
 }
 
 void GenApplicationManager::networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode, int level)
@@ -414,6 +417,7 @@ void GenApplicationManager::networkSignalStrengthChanged(QSystemNetworkInfo::Net
         _mainWindow->statusBar()->indicatorsWidget()->setSignalLevel(level);
     }
 }
+#endif
 
 void GenApplicationManager::startOauthTokenRequest(QString userName, QString userPass)
 {
