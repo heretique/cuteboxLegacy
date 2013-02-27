@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=CuteBox
+Categories=Applications
+Exec=/usr/bin/cutebox
+Icon=cutebox
+X-Icon-path=/usr/share/pixmaps/
+X-Osso-Type=application/x-executable

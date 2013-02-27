@@ -1,0 +1,51 @@
+Source: cutebox
+Section: user/utils
+Priority: optional
+Maintainer: Catalin Moldovan <catalin.moldovan@genera.ro>
+Build-Depends: debhelper (>= 5), libqt4-dev, libqt4-sql-sqlite (>=4.6),
+               libsqlite3-0
+Standards-Version: 3.8.1
+
+Package: cutebox
+Section: user/utils
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: QMusicPlayer
+  QMusicPlayer is a music player application written in Qt for mobile devices.
+XB-Maemo-Display-Name: CuteBox
+XB-Maemo-Icon-26:
+  iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAAAXNSR0IArs4c
+  6QAAAMNQTFRFeAAAJC0XJzETNkEpUVxBano/b5VBb51Abp86dJ46dKU/eqRA
+  hKNPhKZDf6hNgKpGg6xAjqhbirNHi7NQj7Rhk7pHk7pOm7x0mMFUqLqBn8Ng
+  osFxosRYpcJjoMZSoMhbrtBlqtNlstJfttBoq9VYrdRfuNR6v9Zlw9SNudxo
+  t9xvwd9kxd12yN5sy+JpzOKGz+lv0+eA2ep4z+182OqN3uqD2eyY1/Fu2PF2
+  5O1+4O936fF66/ON6/KX7fSk7fWu8Pe604izDAAAAAF0Uk5TAEDm2GYAAAAB
+  YktHRACIBR1IAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH2gETADYZ
+  7cp9nQAABNBJREFUSMe9VotiqjgQrfbu8kjXuMGmrKYIRLQgtsj1iQj+/1fd
+  MwFtv2BPWwjknMwjw6RPT4BWvnwAQx/Q12bqzw/Ndt4jisLsqYMvBWPMAWwb
+  f3S3xkUxtvG8rqTlmLeMeVmvkJK5rhEQGA1tXhTSZrY8fXLX7haxbf7b8L3A
+  FxwmXEaAlLlyxb2ylK6qSs/bxJjCj+uOs9wYiKM5fBeeuOO9rvdTta/zeq+m
+  dV3nUki8ljJaGkGaJQmFFfTIm2bbNGHYtE2oMdg32yQJ5gECn/aCLI2SKAEW
+  i2SRt22WfN3aLDtk2e2WLZIdKYgQvd8FhDQFf7HIb22ekOKWJcSnZXZNviBJ
+  LyAy8TvB7nZIUyNISZAvcGsa0mXR3aXOREprZXlyuB0SY6BzCeZa8A87cuoh
+  iADi5037RQoKIb/RpW2/EFN0aNtDFM2NSwIeRyZoys+h2UHRtjpvm6+2y5UO
+  mybfNbt5LwiipEsq5XCOlOAPxEbTAmG4C9WhyYMAE4HXC0x1Bfp6DQMf7Hyu
+  dHPAGK92yle7q34FtlfdC+YByjMI9rVGoUpd7/3X/LqncVjXSmDPNbbZx21C
+  gjFVM2rjNUQlSElXpSUKQ0oFvsp9KJSQ2zqf/mssyP5rEApcTXyyhXm1Pyso
+  9xIDXZ7z2cwIxjDXV506AxLX7TkXW4x9eT6v8EqeL5fl7CEQYtxDdZNSlGct
+  Nmfp4c7VufSm5+Xb22zSCTgJOH4BSVYkH3sbMIU4n5XLubqUs7e3HwJuuD02
+  F4VHJi8Xl6nLimHsldXS8EcvncDwGTN8pqpKuEzig+Me31TaZXQl+mQ0+psE
+  3cL0eXJ3VWpwC0l8b1OFfFVp78HnrBMww6ePWVdVFbqyKKrKw0ddViu2wisT
+  rzdCZ/kpwKOuNlgyJoWAH4qRjbwk/836zH4ITNOIqxV3SOEIw3cYeTSZPfg/
+  LJBHqtqYPlOWnu2ADx9dryjfOr6Z+iHArChK4cCvcsU5vPr0HAd2lj/4vQVk
+  h/xJuUC3c0L4FRSxjTjkN3/EsNTdAglYfKrWzCsKxMHUqahCB4rPk77zXddx
+  vi2AX8UUgiiqlKnjmuMZNu58REttGv3VCBzX5NL2kVSh+BwaGyuEo+l7v75z
+  7+ydBYdRJtGcfaLK05rR1Kb2JhPQXwwfs0bRW1hVysKL4AQd4hCYUWU+mkzu
+  fGPBuVtQCtkIbPBT5ptcCQfG+HS/BB18y/jz7RKVT3oMgmPszE9wiBdH0lIt
+  acuyHDqBen4X9Hp1UVAcE8c/xj4UojiuHbgm45O6n0tdlvq0mjqLE9c/psyC
+  gouEYRfGFktPgW3355WJu88S0uo7VnBM6HTzj2vXRiCcVlyfpMXu/LsAdaGx
+  T3Z8pOU6gWdKyYHOQ+A9/XsfwstmrNR4g+1DzX6O1UrICmciLu+TieeZhkLH
+  rD0yp6gCX9e1fkX/wjnoh9frFQf7ddk0X8vlUkcG/hgKI/jvuOFouofmK2pa
+  NHicC3Q84Ei5HYDd7w5pwG1uusbTbBxUufR39UrlOxXX16m/bPbhsv34+ICF
+  MDQW5sJmL/3/Dr8+lv9YDtPl1HG87Qb5sbx9PjHfGmK2zGaz0ctfTw8MBoPh
+  4PnX83D4/Pw8HAyHg1/PBsMHBoOn/wd/AIHr6TA2b3XVAAAAAElFTkSuQmCC
