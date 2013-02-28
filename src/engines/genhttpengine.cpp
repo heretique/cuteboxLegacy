@@ -97,7 +97,7 @@ void GenHTTPEngine::executeRequest(GenOAuthRequest *request)
     else if (request->httpMethod() == HttpPOST)
     {
         networkRequest.setHeader(QNetworkRequest::ContentTypeHeader,
-                                 "application/json");
+                                 "application/x-www-form-urlencoded");
         QLOG_DEBUG("GenHTTPEngine::executeRequest - post body: " << request->requestBody());
         _reply = _manager->post(networkRequest, request->requestBody());
     }

@@ -21,6 +21,11 @@ void GenBaseView::activateView(QString className, const QVariant &data,
     _mainWindow->activateView(className, data, useAnim, animType);
 }
 
+void GenBaseView::setViewData(const QVariant &data)
+{
+
+}
+
 void GenBaseView::activatePreviousView()
 {
     _mainWindow->activatePreviousView();

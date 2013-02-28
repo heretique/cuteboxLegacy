@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QVariant>
+#include <QUrl>
 #ifdef Q_OS_SYMBIAN
 #include <QSystemDeviceInfo>
 #include <QSystemNetworkInfo>
@@ -70,6 +71,7 @@ public:
     GenBaseView *view(QString className);
 
     void testData();
+    void requestAuthTokens();
 
 protected:
     void handleCancelFileAction();
@@ -84,7 +86,10 @@ private:
 
 protected slots:
     void handleViewAnimationFinished();
-    void handleUserTokenReceived(QString token, QString secret);
+    void handleAuthorized(QString uid, QString authToken);
+    void handleNotAuthorized();
+    void handleAuthTokensReceived(QString authToken, QString authSecret);
+    void handleUserTokenReceived(QString authToken, QString authSecret, QString userId);
     void handleAccountRegistered();
     void handleAccountInfoReceived(GenAccountInfo accountInfo);
     bool handleAction(const ActionId actionId);
@@ -136,6 +141,8 @@ private:
     int _signalStrength;
     QString _email;
     QString _password;
+    QString _authToken;
+    QString _authSecret;
 };
 
 #endif /* APPLICATIONMANAGER_H_ */

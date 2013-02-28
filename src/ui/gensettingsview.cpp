@@ -85,10 +85,13 @@ void GenSettingsView::handleModelChanged(GenAppModel &appModel)
 {
     GenAccountInfo accountInfo = appModel.getAccountInfo();
     if (this == _mainWindow->currentView() && ui)
+    {
+        ui->displayName->setText(QString("Name: <b>%1</b>").arg(_appModel->settingValue(SETTING_DISPLAY_NAME).toString()));
         ui->usedSpace->setText(QString("Used space: <b>%1 \%</b>").arg(
                                    getUsedSpacePercent(accountInfo._usedSpace,
                                                        accountInfo._sharedSpace,
                                                        accountInfo._spaceLimit), 0, 'f', 1));
+    }
 }
 
 bool GenSettingsView::handleAction(const ActionId actionId)
@@ -159,7 +162,7 @@ void GenSettingsView::retrieveSettings()
                                getUsedSpacePercent(accountInfo._usedSpace,
                                                    accountInfo._sharedSpace,
                                                    accountInfo._spaceLimit), 0, 'f', 1));
-    ui->email->setText(QString("Email: <b>%1</b>").arg(_appModel->settingValue(SETTINGS_EMAIL).toString()));
+    ui->displayName->setText(QString("Name: <b>%1</b>").arg(_appModel->settingValue(SETTING_DISPLAY_NAME).toString()));
     ui->donwloadPath->setText(
                 QString("Download to: <b>%1</b>").arg(_appModel->settingValue(SETTINGS_DOWNLOAD_LOCATION).toString()));
     ui->retrieveThumbnails->setChecked(_appModel->autoGetTumbs());

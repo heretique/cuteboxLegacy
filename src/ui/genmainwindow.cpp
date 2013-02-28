@@ -2,6 +2,7 @@
 #include <QPropertyAnimation>
 #include <QTimer>
 #include <QGraphicsBlurEffect>
+#include <QUrl>
 
 #include "genmainwindow.h"
 #include "ui_genmainwindow.h"
@@ -186,6 +187,16 @@ void GenMainWindow::activateView(QString className, const QVariant &data,
         _newView->activate(data);
         _newView->enableCache();
         emit animationFinished();
+    }
+}
+
+void GenMainWindow::setViewData(QString className, const QVariant &data)
+{
+    GenBaseView *myView = view(className);
+    if (myView)
+    {
+//        QUrl::toPercentEncoding(data.toString());
+        myView->setViewData(data);
     }
 }
 

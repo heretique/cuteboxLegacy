@@ -12,12 +12,17 @@
 
 const QString DROPBOX_HOST = "api.dropbox.com";
 const QString DROPBOX_FILES = "api-content.dropbox.com";
-const QString DROPBOX_VERSION = "/0";
+const QString DROPBOX_AUTHORIZE = "www.dropbox.com";
+const QString REDIRECT_URL = "http://genera.ro";
+const QString REDIRECT_HOST = "www.genera.ro";
+const QString DROPBOX_VERSION = "/1";
 
 enum GenDropboxWSRequestIDs
 {
     WSReqNone,
     WSReqToken,
+    WSReqAutorize,
+    WSReqAccessToken,
     WSReqAccountInfo,
     WSReqAccount,
     WSReqFileUpload,
@@ -35,11 +40,29 @@ static GenWSRequestInfo GenDropboxWSRequests[] =
     {
         WSReqToken,
         DROPBOX_HOST,
-        "/token",
+        "/oauth/request_token",
+        HttpPOST,
+        AuthApp,
+        true,
+        true
+    },
+    {
+        WSReqAutorize,
+        DROPBOX_AUTHORIZE,
+        "/oauth/authorize",
         HttpGET,
         AuthNone,
         true,
         true
+    },
+    {
+        WSReqAccessToken,
+        DROPBOX_HOST,
+        "/oauth/access_token",
+        HttpPOST,
+        AuthUser,
+        true,
+        false
     },
     {
         WSReqAccountInfo,
