@@ -71,9 +71,9 @@ background-color: rgb(238, 238, 238);</string>
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="email">
+     <widget class="QLabel" name="displayName">
       <property name="text">
-       <string>Email: bla.bla@gmail.com</string>
+       <string>Name: bla.bla@gmail.com</string>
       </property>
       <property name="wordWrap">
        <bool>true</bool>

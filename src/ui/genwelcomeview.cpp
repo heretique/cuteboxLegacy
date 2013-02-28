@@ -9,6 +9,7 @@
 #include "genresourcereader.h"
 #include "genmenubar.h"
 #include "genpublicstrings.h"
+#include "genappmanager.h"
 #include "genliterals.h"
 #include "genlog.h"
 
@@ -68,7 +69,8 @@ bool GenWelcomeView::handleAction(const ActionId actionId)
 
 void GenWelcomeView::oldUserButtonClicked()
 {
-    activateView("GenLoginView", QVariant(), true, GenFromTop);
+    activateView("GenWebView", QVariant(), true, GenFromTop);
+    GenApplicationManager::instance()->requestAuthTokens();
 }
 
 void GenWelcomeView::newUserButtonClicked()

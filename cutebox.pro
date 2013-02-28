@@ -96,7 +96,8 @@ SOURCES += src/common/genresourcereader.cpp \
     src/ui/genpageindicator.cpp \
     src/common/genfilesystemfilterproxymodel.cpp \
     src/ui/genlistview.cpp \
-    src/ui/genalbumwidget.cpp
+    src/ui/genalbumwidget.cpp \
+    src/ui/genwebview.cpp
 
 HEADERS += inc/common/genresourcereader.h \
     inc/common/genfiletransfer.h \
@@ -164,7 +165,8 @@ HEADERS += inc/common/genresourcereader.h \
     inc/ui/genpageindicator.h \
     inc/common/genfilesystemfilterproxymodel.h \
     inc/ui/genlistview.h \
-    inc/ui/genalbumwidget.h
+    inc/ui/genalbumwidget.h \
+    inc/ui/genwebview.h
     
 INCLUDEPATH += inc \
     inc/common \
@@ -194,7 +196,8 @@ FORMS += \
     ui/genmainwindow.ui \
     ui/genfileprogress.ui \
     ui/genhelpview.ui \
-    ui/genpageindicator.ui
+    ui/genpageindicator.ui \
+    ui/genwebview.ui
     
  
     

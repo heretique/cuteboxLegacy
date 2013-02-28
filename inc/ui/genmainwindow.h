@@ -38,6 +38,8 @@ public:
     void activateView(QString className, const QVariant &data = QVariant(),
         bool useAni = true, GenViewAnimType animType = GenFromRight);
 
+    void setViewData(QString className, const QVariant &data = QVariant());
+
     void activatePreviousView();
     /*!
      * \brief Removes a widget from the stacked widget

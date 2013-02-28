@@ -32,8 +32,14 @@ void GenOAuthRequest::prepareRequest() {
         _requestParameters.append( qMakePair( OAUTH_KEY_TIMESTAMP, oauthTimestamp() ));
         _requestParameters.append( qMakePair( OAUTH_KEY_NONCE, oauthNonce() ));
         _requestParameters.append( qMakePair( OAUTH_KEY_TOKEN, _oauthToken ));
-        insertAdditionalParams(_requestParameters);
+    } else if (_requestType == AuthApp) {
+        _requestParameters.append( qMakePair( OAUTH_KEY_SIGNATURE_METHOD, _oauthSignatureMethod ));
+        _requestParameters.append( qMakePair( OAUTH_KEY_CONSUMER_KEY, _oauthConsumerKey ));
+        _requestParameters.append( qMakePair( OAUTH_KEY_VERSION, _oauthVersion ));
+        _requestParameters.append( qMakePair( OAUTH_KEY_TIMESTAMP, oauthTimestamp() ));
+        _requestParameters.append( qMakePair( OAUTH_KEY_NONCE, oauthNonce() ));
     }
+    insertAdditionalParams(_requestParameters);
 }
 
 void GenOAuthRequest::insertAdditionalParams(QList< QPair<QString, QString> > &requestParams) {

@@ -29,7 +29,8 @@ public:
 
     // Activates existing view
     virtual void activateView(QString className, const QVariant &data =
-        QVariant(), bool useAnimation = true, GenViewAnimType animType = GenFromRight);
+            QVariant(), bool useAnimation = true, GenViewAnimType animType = GenFromRight);
+    virtual void setViewData(const QVariant &data = QVariant());
 
 public Q_SLOTS:
     virtual void exit();

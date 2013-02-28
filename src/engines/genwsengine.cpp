@@ -58,42 +58,46 @@ GenWSEngine::~GenWSEngine()
 void GenWSEngine::parseResponse(const QByteArray &data)
 {
     QLOG_INFO(">> GenWSEngine::parseResponse()");
-    QString error;
-    QVariant result = Json::parse(data, &error);
-    if (result.isNull())
-    {
-        if (WSReqAccount == _currentWSRequestId && "OK" == data)
+    if (WSReqToken == _currentWSRequestId || WSReqAccessToken == _currentWSRequestId) {
+        parseTokens(_currentWSRequestId, data);
+    } else {
+        QString error;
+        QVariant result = Json::parse(data, &error);
+        if (result.isNull())
         {
-            emit accountCreated();
+            if (WSReqAccount == _currentWSRequestId && "OK" == data)
+            {
+                emit accountCreated();
+            }
+            QLOG_ERROR( "Failed to parse: " << error);
+            return;
         }
-        QLOG_ERROR( "Failed to parse: " << error);
-        return;
-    }
-    else
-    {
-        switch (_currentWSRequestId)
+        else
         {
-        case WSReqToken:
-            handleTokenReceived(result);
-            break;
-        case WSReqGetMetadata:
-            handleMetaDataReceived(result);
-            break;
-        case WSReqFileCopy:
-        case WSReqFileMove:
-            handleFileCopiedOrMoved(result);
-            break;
-        case WSReqFileDelete:
-            handleFileDeleted(result);
-            break;
-        case WSReqAccountInfo:
-            handleAccountInfoReceived(result);
-            break;
-        case WSReqCreateFolder:
-            handleFolderCreated(result);
-            break;
-        default:
-            break;
+            switch (_currentWSRequestId)
+            {
+//            case WSReqToken:
+//                handleTokenReceived(result);
+//                break;
+            case WSReqGetMetadata:
+                handleMetaDataReceived(result);
+                break;
+            case WSReqFileCopy:
+            case WSReqFileMove:
+                handleFileCopiedOrMoved(result);
+                break;
+            case WSReqFileDelete:
+                handleFileDeleted(result);
+                break;
+            case WSReqAccountInfo:
+                handleAccountInfoReceived(result);
+                break;
+            case WSReqCreateFolder:
+                handleFolderCreated(result);
+                break;
+            default:
+                break;
+            }
         }
     }
     QLOG_INFO("<< GenWSEngine::parseResponse()");
@@ -388,6 +392,18 @@ void GenWSEngine::parseErrorResponse(int response, const QByteArray &data)
     QLOG_DEBUG("<< GenWSEngine::parseErrorResponse");
 }
 
+void GenWSEngine::parseTokens(int requestId, const QByteArray &data) {
+    QString url = "http://test.com?" + data;
+    QUrl parserUrl = url;
+    QString secret = parserUrl.queryItemValue("oauth_token_secret");
+    QString token = parserUrl.queryItemValue("oauth_token");
+    if (requestId == WSReqAccessToken) {
+        QString uid = parserUrl.queryItemValue("uid");
+        emit accessTokensReceived(token, secret, uid);
+    } else
+        emit authTokensReceived(token, secret);
+}
+
 void GenWSEngine::handleUploadFinished(bool error, bool aborted, const QString &text)
 {
     QLOG_DEBUG("GenWSEngine::handleUploadFinished - error = " << error
@@ -442,7 +458,7 @@ void GenWSEngine::handleTokenReceived(const QVariant &variant)
         QLOG_ERROR("GenWSEngine::handleTokenReceived - unknown response");
         return;
     }
-    emit userTokenReceived(token, secret);
+//    emit accessTokensReceived(token, secret);
 }
 
 void GenWSEngine::handleMetaDataReceived(const QVariant &variant)

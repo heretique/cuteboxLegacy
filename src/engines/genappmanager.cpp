@@ -19,7 +19,8 @@
 #include "genmainwindow.h"
 #include "genbaseview.h"
 #include "genwelcomeview.h"
-#include "genloginview.h"
+//#include "genloginview.h"
+#include "genwebview.h"
 #include "genmainview.h"
 #include "gensettingsview.h"
 #include "genregisterview.h"
@@ -177,8 +178,8 @@ void GenApplicationManager::initialize()
 
     GenBaseView *welcomeView = new GenWelcomeView(_applicationModel, _mainWindow);
     _mainWindow->addView(welcomeView);
-    GenBaseView *loginView = new GenLoginView(_applicationModel, _mainWindow);
-    _mainWindow->addView(loginView);
+    GenBaseView *webView = new GenWebView(_applicationModel, _mainWindow);
+    _mainWindow->addView(webView);
     GenBaseView *mainView = new GenMainView(_wsEngine, _applicationModel, _mainWindow);
     _mainWindow->addView(mainView);
     GenSettingsView *settingsView = new GenSettingsView(_applicationModel, _mainWindow);
@@ -196,16 +197,22 @@ void GenApplicationManager::initialize()
     _mainWindow->addView(photoView);
 #endif // FEATURE_PHOTO_WALL
 
-    connect(loginView, SIGNAL(startOauthTokenRequest(QString, QString)),
-            SLOT(startOauthTokenRequest(QString, QString)));
+    connect(webView,
+            SIGNAL(authorized(QString,QString)),
+            SLOT(handleAuthorized(QString,QString)));
+    connect(webView,
+            SIGNAL(notAuthorized(QString,QString)),
+            SLOT(handleNotAuthorized(QString,QString)));
     connect(registerView,
             SIGNAL(registerAccount(QString,QString,QString,QString)),
             SLOT(startRegisterRequest(QString,QString,QString,QString)));
     connect(settingsView,
             SIGNAL(getAccountInfo()),
             SLOT(retrieveAccountInfo()));
-    connect(_wsEngine, SIGNAL(userTokenReceived(QString, QString)),
-            SLOT(handleUserTokenReceived(QString, QString)));
+    connect(_wsEngine, SIGNAL(authTokensReceived(QString,QString)),
+            SLOT(handleAuthTokensReceived(QString,QString)));
+    connect(_wsEngine, SIGNAL(accessTokensReceived(QString, QString, QString)),
+            SLOT(handleUserTokenReceived(QString, QString, QString)));
     connect(_wsEngine, SIGNAL(accountCreated()),
             SLOT(handleAccountRegistered()));
     connect(_wsEngine,
@@ -361,11 +368,38 @@ void GenApplicationManager::handleViewAnimationFinished()
 
 }
 
-void GenApplicationManager::handleUserTokenReceived(QString token, QString secret)
+void GenApplicationManager::handleAuthorized(QString uid, QString authToken)
 {
-    _applicationModel->setSettingValue(SETTINGS_OAUTH_TOKEN, token);
-    _applicationModel->setSettingValue(SETTINGS_OAUTH_TOKEN_SECRET, secret);
-    _wsEngine->setUserToken(token, secret);
+    QLOG_DEBUG("[GenApplicationManager::handleAuthorized()]");
+    _applicationModel->setSettingValue(SETTING_UID, uid);
+    _wsEngine->setUserToken(authToken, _authSecret);
+    startOauthTokenRequest("", "");
+}
+
+void GenApplicationManager::handleNotAuthorized()
+{
+    QLOG_DEBUG("[GenApplicationManager::handleNotAuthorized()]");
+    _applicationModel->setSettingValue(SETTINGS_OAUTH_TOKEN, "");
+    _applicationModel->setSettingValue(SETTINGS_OAUTH_TOKEN_SECRET, "");
+    _applicationModel->setSettingValue(SETTING_UID, "");
+    _mainWindow->activateView("GenWelcomeView", QVariant(), true, GenFromBottom);
+
+}
+
+void GenApplicationManager::handleAuthTokensReceived(QString authToken, QString authSecret)
+{
+    QString authUrl = "https://www.dropbox.com/1/oauth/authorize?oauth_token=" + authToken + "&display=mobile" + "&oauth_callback=" + REDIRECT_URL;
+    _authToken = authToken;
+    _authSecret = authSecret;
+    _mainWindow->showWaitingIndicator("Loading...");
+    _mainWindow->setViewData("GenWebView", authUrl);
+}
+
+void GenApplicationManager::handleUserTokenReceived(QString authToken, QString authSecret, QString userId)
+{
+    _applicationModel->setSettingValue(SETTINGS_OAUTH_TOKEN, authToken);
+    _applicationModel->setSettingValue(SETTINGS_OAUTH_TOKEN_SECRET, authSecret);
+    _wsEngine->setUserToken(authToken, authSecret);
     if (_applicationModel->isFirstRun())
         _mainWindow->activateView("GenHelpView", QVariant(), true, GenFromTop);
     else
@@ -419,14 +453,16 @@ void GenApplicationManager::networkSignalStrengthChanged(QSystemNetworkInfo::Net
 }
 #endif
 
+void GenApplicationManager::requestAuthTokens() {
+    QList<QPair<QString, QString> > params;
+    _wsEngine->setUserToken("", "");
+    _wsEngine->startWSRequest(GetDropboxRequestById(WSReqToken), "", params, QByteArray());
+}
+
 void GenApplicationManager::startOauthTokenRequest(QString userName, QString userPass)
 {
-    _applicationModel->setSettingValue(SETTINGS_EMAIL, userName);
     QList<QPair<QString, QString> > params;
-    params.append(qMakePair<QString, QString> ("email", userName));
-    params.append(qMakePair<QString, QString> ("password", userPass));
-    params.append(qMakePair<QString, QString> ("oauth_consumer_key", APP_OAUTH_KEY));
-    _wsEngine->startWSRequest(GetDropboxRequestById(WSReqToken), "", params, QByteArray());
+    _wsEngine->startWSRequest(GetDropboxRequestById(WSReqAccessToken), "", params, QByteArray());
 }
 
 void GenApplicationManager::startRegisterRequest(QString firstName,

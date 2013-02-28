@@ -103,8 +103,8 @@ protected slots:
      * \param data, a const QByteArray&. The xml received.
      */
     void parseResponse(const QByteArray &data);
-
     void parseErrorResponse(int response, const QByteArray &data);
+    void parseTokens(int requestId, const QByteArray &data);
 
     void handleUploadFinished(bool error, bool aborted, const QString &text);
     void handleDownloadFinished(QNetworkReply::NetworkError error, int httpStatus, QByteArray reply);
@@ -112,7 +112,8 @@ protected slots:
 signals:
     void httpError();
     void accountCreated();
-    void userTokenReceived(QString token, QString secret);
+    void authTokensReceived(QString token, QString secret);
+    void accessTokensReceived(QString authToken, QString authSecret, QString userId);
     void metaDataReceived(GenFileInfo *parent, QList<GenFileInfo*> content);
     void metaDataNotModified();
     void requestStarted();
