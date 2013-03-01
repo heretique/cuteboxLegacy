@@ -65,10 +65,6 @@ void GenWSEngine::parseResponse(const QByteArray &data)
         QVariant result = Json::parse(data, &error);
         if (result.isNull())
         {
-            if (WSReqAccount == _currentWSRequestId && "OK" == data)
-            {
-                emit accountCreated();
-            }
             QLOG_ERROR( "Failed to parse: " << error);
             return;
         }

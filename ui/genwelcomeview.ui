@@ -114,7 +114,7 @@ QPushButton::pressed
 }</string>
         </property>
         <property name="text">
-         <string>I'm already a Dropbox user</string>
+         <string>Start using Dropbox</string>
         </property>
         <property name="flat">
          <bool>true</bool>
@@ -123,82 +123,6 @@ QPushButton::pressed
       </item>
       <item>
        <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <spacer name="horizontalSpacer_4">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QPushButton" name="newUserButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>282</width>
-          <height>56</height>
-         </size>
-        </property>
-        <property name="focusPolicy">
-         <enum>Qt::NoFocus</enum>
-        </property>
-        <property name="contextMenuPolicy">
-         <enum>Qt::NoContextMenu</enum>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">QPushButton
-{
-	background: transparent;
-    background-image: url(:/images/welcome_button_bk.png);
-    border-width: 0px;
-	border-style: none;
-	color: white;
-}
-
-QPushButton::pressed
-{
-	background: transparent;
-    border-width: 0px;
-	background-image: url(:/images/welcome_button_high.png);
-	border-style: none;
-}</string>
-        </property>
-        <property name="text">
-         <string>I'm new to Dropbox</string>
-        </property>
-        <property name="flat">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_3">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>

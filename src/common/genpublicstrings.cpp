@@ -28,7 +28,7 @@ void GenPublicStrings::retranslateStrings()
     {
     //Main screen
     STR_TEST = QObject::tr("TEST", "");
-    STR_WELCOME = QObject::tr("Welcome to cuteBox");
+    STR_WELCOME = QObject::tr("Welcome");
     STR_CHOOSE_DOWNLOAD_FILES = QObject::tr("Choose the files you want to download.");
     STR_CONFIRM_DOWNLOAD_FILES = QObject::tr("Download %1 file(s)?");
     STR_CHOOSE_FILES = QObject::tr("Choose the files or folders and then chose your action.");
