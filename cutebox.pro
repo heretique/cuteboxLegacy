@@ -1,8 +1,9 @@
 debug { MMP_RULES -= PAGED
         MMP_RULES += UNPAGED }
 
-include(photo_wall.pri)
+#include(photo_wall.pri)
 include(qrcode.pri)
+#include(inneractiveads.pri)
 
 CONFIG += debug mobility
 symbian {
@@ -16,7 +17,7 @@ debug { MMP_RULES -= PAGED
 
 TARGET = cuteBox
 TEMPLATE = app
-VERSION = 1.1.0
+VERSION = 1.3.0
 
 # All generated files goes same directory
 OBJECTS_DIR = build
@@ -32,7 +33,9 @@ QT += core \
     webkit \
     network
     
-DEFINES += Q_LOGGING DRAW_BOUNDARIES
+DEFINES += Q_LOGGING \
+    DRAW_BOUNDARIES \
+#    FEATURE_ADS
 
 SOURCES += src/common/genresourcereader.cpp \
     src/common/genfiletransfer.cpp \
@@ -55,7 +58,6 @@ SOURCES += src/common/genresourcereader.cpp \
     src/ui/genbaseview.cpp \
     src/ui/genloginview.cpp \
     src/ui/genwelcomeview.cpp \
-    src/ui/genregisterview.cpp \
     src/ui/genmainview.cpp \
     src/ui/genfilebrowserview.cpp \
     src/ui/genfiledetailsview.cpp \
@@ -126,7 +128,6 @@ HEADERS += inc/common/genresourcereader.h \
     inc/json/genjson.h \
     inc/ui/genwelcomeview.h \
     inc/ui/genmainview.h \
-    inc/ui/genregisterview.h \
     inc/ui/genfilebrowserview.h \
     inc/ui/genfiledetailsview.h \
     inc/ui/gendownloadsview.h \
@@ -184,7 +185,6 @@ FORMS += \
     ui/gensettingsview.ui \
     ui/genfiledetailsview.ui \
     ui/genfilebrowserview.ui \
-    ui/genregisterview.ui \
 	ui/genstatuswidget.ui \
     ui/genindicatorswidget.ui \
     ui/genquerypopup.ui \
@@ -217,6 +217,7 @@ win32 {
 # S60    
 symbian { 
     TARGET.UID3 = 0x2004111A
+#    TARGET.UID3 = 0x20056B96
     TARGET.CAPABILITY += NetworkServices \
     LocalServices \
     ReadUserData \
@@ -277,6 +278,8 @@ symbian {
             -lmgfetch \
             -lcone \
             -letext \
-            -lestor \
-            -lInnerActiveAdQtLib
+            -lestor
+
+    gccOption = "OPTION gcce -fpermissive"
+    MMP_RULES += gccOption
 }

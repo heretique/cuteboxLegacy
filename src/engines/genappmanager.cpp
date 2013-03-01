@@ -8,11 +8,13 @@
 #include <eikenv.h>
 #include <eikappui.h>
 #include <aknappui.h>
-#ifdef FEATURE_ADS
+#endif // Q_OS_SYMBIAN
+
+#if defined(FEATURE_ADS) && (defined(Q_OS_SYMBIAN) || defined(QT_SIMULATOR))
 #include "InnerActiveAdModule.h"
 #include "InnerActiveAdWidget.h"
 #endif // FEATURE_ADS
-#endif // Q_OS_SYMBIAN
+
 #include "genfileserverutils.h"
 
 #include "genappmanager.h"
@@ -23,7 +25,6 @@
 #include "genwebview.h"
 #include "genmainview.h"
 #include "gensettingsview.h"
-#include "genregisterview.h"
 #include "genfiledetailsview.h"
 #include "genfilebrowserview.h"
 #include "genlog.h"
@@ -184,8 +185,6 @@ void GenApplicationManager::initialize()
     _mainWindow->addView(mainView);
     GenSettingsView *settingsView = new GenSettingsView(_applicationModel, _mainWindow);
     _mainWindow->addView(settingsView);
-    GenRegisterView *registerView = new GenRegisterView(_applicationModel, _mainWindow);
-    _mainWindow->addView(registerView);
     GenFileDetailsView *fileDetailsView = new GenFileDetailsView(_wsEngine, _applicationModel, _mainWindow);
     _mainWindow->addView(fileDetailsView);
     GenFileBrowserView *fileBrowserView = new GenFileBrowserView(_applicationModel, _mainWindow);
@@ -201,11 +200,8 @@ void GenApplicationManager::initialize()
             SIGNAL(authorized(QString,QString)),
             SLOT(handleAuthorized(QString,QString)));
     connect(webView,
-            SIGNAL(notAuthorized(QString,QString)),
-            SLOT(handleNotAuthorized(QString,QString)));
-    connect(registerView,
-            SIGNAL(registerAccount(QString,QString,QString,QString)),
-            SLOT(startRegisterRequest(QString,QString,QString,QString)));
+            SIGNAL(notAuthorized()),
+            SLOT(handleNotAuthorized()));
     connect(settingsView,
             SIGNAL(getAccountInfo()),
             SLOT(retrieveAccountInfo()));
@@ -262,12 +258,12 @@ void GenApplicationManager::initialize()
     QTimer *clockperiodic = new QTimer(this);
     connect(clockperiodic, SIGNAL(timeout()), SLOT(timeChanged()));
     clockperiodic->start(10 * 1000);
-#if defined(Q_OS_SYMBIAN) && defined(FEATURE_ADS)
+#if defined(FEATURE_ADS) && (defined(Q_OS_SYMBIAN) || defined(QT_SIMULATOR))
     initAdEngine();
 #endif
 }
 
-#if defined(Q_OS_SYMBIAN) && defined(FEATURE_ADS)
+#if defined(FEATURE_ADS) && (defined(Q_OS_SYMBIAN) || defined(QT_SIMULATOR))
 void GenApplicationManager::initAdEngine()
 {
     ///////////////////////////////////////////////////////////////
@@ -315,7 +311,9 @@ void GenApplicationManager::initAdEngine()
     int res = _adModule->requestAd();
     Q_UNUSED(res);
 }
-#endif
+#endif // FEATURE_ADS
+
+
 void GenApplicationManager::run(QSplashScreen &splash)
 {
     _mainWindow->currentView()->activate();
@@ -465,23 +463,6 @@ void GenApplicationManager::startOauthTokenRequest(QString userName, QString use
     _wsEngine->startWSRequest(GetDropboxRequestById(WSReqAccessToken), "", params, QByteArray());
 }
 
-void GenApplicationManager::startRegisterRequest(QString firstName,
-                                                 QString lastName,
-                                                 QString email,
-                                                 QString password)
-{
-    _applicationModel->setSettingValue(SETTINGS_EMAIL, email);
-    _email = email;
-    _password = password;
-    QList<QPair<QString, QString> > params;
-    params.append(qMakePair<QString, QString> ("first_name", firstName));
-    params.append(qMakePair<QString, QString> ("last_name", lastName));
-    params.append(qMakePair<QString, QString> ("email", email));
-    params.append(qMakePair<QString, QString> ("password", password));
-    params.append(qMakePair<QString, QString> ("oauth_consumer_key", APP_OAUTH_KEY));
-    _wsEngine->startWSRequest(GetDropboxRequestById(WSReqAccount), "", params, QByteArray());
-}
-
 void GenApplicationManager::retrieveAccountInfo()
 {
     _wsEngine->startWSRequest(GetDropboxRequestById(WSReqAccountInfo), QByteArray());
@@ -559,22 +540,22 @@ void GenApplicationManager::handleVkbStateChanged()
 #endif // Q_OS_SYMBIAN
 }
 
-#if defined(Q_OS_SYMBIAN) && defined(FEATURE_ADS)
+#if defined(FEATURE_ADS) && (defined(Q_OS_SYMBIAN) || defined(QT_SIMULATOR))
 
 void GenApplicationManager::onStartReloadAd()
 {
-    QLOG_DEBUG("GenApplicationManager::onStartReloadAd");
+    QLOG_DEBUG("[ADS] GenApplicationManager::onStartReloadAd");
 }
 
 void GenApplicationManager::onNetworkError(const QString& networkError)
 {
-    QLOG_DEBUG("GenApplicationManager::onNetworkError - error: " << networkError);
+    QLOG_DEBUG("[ADS] GenApplicationManager::onNetworkError - error: " << networkError);
     QMessageBox::critical(_mainWindow, tr("Network Error"), networkError, QMessageBox::Ok);
 }
 
 void GenApplicationManager::onAdDataReady()
 {
-    QLOG_DEBUG("GenApplicationManager::onAdDataReady");
+    QLOG_DEBUG("[ADS] GenApplicationManager::onAdDataReady");
     int res = _adModule->updateBanner(_adWidget);
     bool bOk = false;
     switch (res)
@@ -599,6 +580,6 @@ void GenApplicationManager::onAdDataReady()
 
 void GenApplicationManager::onAdDataCorrupted()
 {
-    QLOG_DEBUG("GenApplicationManager::onAdDataCorrupted");
+    QLOG_DEBUG("[ADS] GenApplicationManager::onAdDataCorrupted");
 }
-#endif
+#endif // FEATURE_ADS

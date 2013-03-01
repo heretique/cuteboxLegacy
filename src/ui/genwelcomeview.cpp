@@ -35,9 +35,6 @@ void GenWelcomeView::activate(const QVariant &data)
     connect(ui->oldUserButton,
             SIGNAL(clicked()),
             SLOT(oldUserButtonClicked()));
-    connect(ui->newUserButton,
-            SIGNAL(clicked()),
-            SLOT(newUserButtonClicked()));
     connect(ui->dropboxLink,
             SIGNAL(clicked()),
             SLOT(handleDropboxCliked()));
@@ -71,11 +68,6 @@ void GenWelcomeView::oldUserButtonClicked()
 {
     activateView("GenWebView", QVariant(), true, GenFromTop);
     GenApplicationManager::instance()->requestAuthTokens();
-}
-
-void GenWelcomeView::newUserButtonClicked()
-{
-    activateView("GenRegisterView", QVariant(), true, GenFromTop);
 }
 
 void GenWelcomeView::handleDropboxCliked()

@@ -39,7 +39,6 @@ protected:
 protected slots:
     
     void oldUserButtonClicked();
-    void newUserButtonClicked();
     void handleDropboxCliked();
 
 private:

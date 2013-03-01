@@ -24,7 +24,6 @@ enum GenDropboxWSRequestIDs
     WSReqAutorize,
     WSReqAccessToken,
     WSReqAccountInfo,
-    WSReqAccount,
     WSReqFileUpload,
     WSReqFileDownload,
     WSReqGetMetadata,
@@ -72,15 +71,6 @@ static GenWSRequestInfo GenDropboxWSRequests[] =
         AuthUser,
         true,
         false
-    },
-    {
-        WSReqAccount,
-        DROPBOX_HOST,
-        "/account",
-        HttpGET,
-        AuthNone,
-        true,
-        true
     },
     {
         WSReqGetMetadata,

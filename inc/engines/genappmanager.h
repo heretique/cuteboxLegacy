@@ -102,10 +102,6 @@ private slots:
     void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode, int level);
 #endif
     void startOauthTokenRequest(QString userName, QString userPass);
-    void startRegisterRequest(QString firstName,
-                              QString lastName,
-                              QString email,
-                              QString password);
     void retrieveAccountInfo();
     void timeChanged();
     void responseReceived();
@@ -113,28 +109,31 @@ private slots:
     void requestStarted();
     void handleAboutToQuit();
     void handleVkbStateChanged();
-#if defined(Q_OS_SYMBIAN) && defined(FEATURE_ADS)
+#if defined(FEATURE_ADS) && (defined(Q_OS_SYMBIAN) || defined(QT_SIMULATOR))
     void onStartReloadAd();
     void onAdDataReady();
     void onAdDataCorrupted();
     void onNetworkError(const QString& networkError);
-#endif // defined(Q_OS_SYMBIAN) && defined(FEATURE_ADS)
+#endif // defined(FEATURE_ADS)
 
 private:
     static GenApplicationManager *_instance; /*!< Pointer to ApplicationManager instance */
     GenMainWindow *_mainWindow; /*!< The application's main window */
     GenAppModel *_applicationModel; /*!< The application model */
     GenFileServerUtils *_fsUtils; /*!< File server utils. Used to monitor memory card removal */
+
 #ifdef Q_OS_SYMBIAN
     QSystemDeviceInfo *_deviceInfo; /*!< Monitors the active profile, battery status>*/
     QSystemNetworkInfo *_networkInfo;
     QSystemDeviceInfo::Profile _activeProfile;
     QValueSpaceSubscriber *_vkbstate;
-#ifdef FEATURE_ADS
+#endif // Q_OS_SYMBIAN
+
+#if defined(FEATURE_ADS) && (defined(Q_OS_SYMBIAN) || defined(QT_SIMULATOR))
     InnerActiveAdModule *_adModule;
     InnerActiveAdWidget *_adWidget;
 #endif // FEATURE_ADS
-#endif // Q_OS_SYMBIAN
+
     GenWSEngine *_wsEngine;
     bool _isForward;
     int _batteryLevel;
